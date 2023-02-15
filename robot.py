@@ -37,8 +37,8 @@ class ROBOT:
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
                 desiredAngle = self.nn.Get_Value_Of(neuronName)
-                for motor in self.motors:
-                    self.motors[motor].Set_Value(self.robotId,desiredAngle)
+                jointName = bytes(jointName, 'utf-8')
+                self.motors[jointName].Set_Value(self.robotId,desiredAngle)
 
 
     def Think(self):
