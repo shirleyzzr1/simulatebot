@@ -1,5 +1,5 @@
 import numpy as np
-STEP = 1000
+STEP = 500
 maxForce = 20
 SLEEP = 1.0/100
 Gravity = -9.8
