@@ -9,4 +9,5 @@ BphaseOffset = 0
 Famplitude = np.pi/4
 Ffrequency = 10
 FphaseOffset = 0
-numberOfGenerations = 50
+numberOfGenerations = 10
+populationSize = 2

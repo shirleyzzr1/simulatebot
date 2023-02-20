@@ -2,17 +2,15 @@ import numpy as np
 import pyrosim.pyrosim as pyrosim
 import os
 import random
+import time
 class SOLUTION:
-    def __init__(self) -> None:
+    def __init__(self,myID) -> None:
         self.weights = 2*np.random.rand(3,2)-1
+        self.myID = myID
 
     def Evaluate(self,directOrGUI):
-        self.Create_Body()
-        self.Create_Brain()
-        os.system("python3 simulate.py "+directOrGUI)
-        fitnessFile = open("fitness.txt", "r")
-        self.fitness = float(fitnessFile.read())
-        fitnessFile.close()
+        self.Start_Simulation(directOrGUI)
+        self.Wait_For_Simulation_To_End()
 
     def Create_Body(self):
         pyrosim.Start_SDF("world.sdf")
@@ -38,7 +36,7 @@ class SOLUTION:
         pyrosim.Send_Cube(name="Box",pos=[x,y,z],size=[length,width,height])
         pyrosim.End()
 
-        pyrosim.Start_NeuralNetwork("brain.nndf")
+        pyrosim.Start_NeuralNetwork("brain{id}.nndf".format(id=self.myID))
         pyrosim.Send_Sensor_Neuron(name = 0 , linkName = "Torso")
         pyrosim.Send_Sensor_Neuron(name = 1 , linkName = "BackLeg")
         pyrosim.Send_Sensor_Neuron(name = 2 , linkName = "FrontLeg")
@@ -57,5 +55,26 @@ class SOLUTION:
         randomRow = random.randint(0,2)
         randomColumn = random.randint(0,1)
         self.weights[randomRow,randomColumn] = random.random()*2-1
+
+    def Set_ID(self,id):
+        self.myID = id
+
+    def Start_Simulation(self,directOrGUI):
+        self.Create_Body()
+        self.Create_Brain()
+        os.system("python3 simulate.py "+directOrGUI + " "+str(self.myID)+"&")
+
+    def Wait_For_Simulation_To_End(self):
+        while not os.path.exists("fitness"+str(self.myID)+".txt"):
+            time.sleep(0.1)
+        fitnessFile = open("fitness"+str(self.myID)+".txt", "r")
+        # print("fitnessfileread:",fitnessFile.read())
+        # tmpfile = "fitness"+str(self.myID)+".txt"
+        # tmp = fitnessFile.read()
+        self.fitness = float(fitnessFile.read())
+        print('fitness: ',self.fitness)
+        fitnessFile.close()
+        os.system("rm "+"fitness"+str(self.myID)+".txt")
+
         
 
